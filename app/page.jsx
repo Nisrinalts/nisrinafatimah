@@ -245,6 +245,7 @@ function LoopCarousel({ photos, small = false, onOpen }) {
   const [index, setIndex] = useState(photos.length);
   const [animate, setAnimate] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const gestureRef = useRef({ startX: null });
   const loopPhotos = [...photos, ...photos, ...photos];
   const basis = isMobile ? 278 : small ? 308 : 378;
 
@@ -258,6 +259,17 @@ function LoopCarousel({ photos, small = false, onOpen }) {
   const move = direction => {
     setAnimate(true);
     setIndex(current => current + direction);
+  };
+
+  const handleTouchStart = event => {
+    gestureRef.current.startX = event.touches[0].clientX;
+  };
+
+  const handleTouchEnd = event => {
+    if (gestureRef.current.startX === null) return;
+    const diff = gestureRef.current.startX - event.changedTouches[0].clientX;
+    gestureRef.current.startX = null;
+    if (Math.abs(diff) > 36) move(diff > 0 ? 1 : -1);
   };
 
   const normalize = () => {
@@ -285,7 +297,7 @@ function LoopCarousel({ photos, small = false, onOpen }) {
       <button className="edge-btn left" onClick={() => move(-1)} aria-label="Previous archive photo">
         &lsaquo;
       </button>
-      <div className="loop-carousel-window">
+      <div className="loop-carousel-window" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
         <div
           className={`loop-photo-track${small ? ' small-loop-track' : ''}`}
           onTransitionEnd={normalize}
@@ -322,13 +334,34 @@ export default function Page() {
   const [experienceIndex, setExperienceIndex] = useState(experienceItems.length);
   const [experienceAnimate, setExperienceAnimate] = useState(true);
   const [projectIndex, setProjectIndex] = useState(0);
+  const [isMobileView, setIsMobileView] = useState(false);
+  const [isSmallMobileView, setIsSmallMobileView] = useState(false);
   const [glow, setGlow] = useState({ x: -300, y: -300 });
   const loopExperienceItems = [...experienceItems, ...experienceItems, ...experienceItems];
+  const projectItems = projectSlides.flat();
+  const projectsPerSlide = isMobileView ? 2 : 4;
+  const visibleProjectSlides = projectItems.reduce((slides, project, index) => {
+    if (index % projectsPerSlide === 0) slides.push([]);
+    slides[slides.length - 1].push(project);
+    return slides;
+  }, []);
+  const experienceStep = isSmallMobileView ? 448 : isMobileView ? 426 : 176;
+  const experienceGestureRef = useRef({ startY: null });
 
   useEffect(() => {
     const onMove = event => setGlow({ x: event.clientX, y: event.clientY });
     window.addEventListener('mousemove', onMove);
     return () => window.removeEventListener('mousemove', onMove);
+  }, []);
+
+  useEffect(() => {
+    const updateViewport = () => {
+      setIsMobileView(window.innerWidth <= 900);
+      setIsSmallMobileView(window.innerWidth <= 520);
+    };
+    updateViewport();
+    window.addEventListener('resize', updateViewport);
+    return () => window.removeEventListener('resize', updateViewport);
   }, []);
 
   useEffect(() => {
@@ -360,12 +393,27 @@ export default function Page() {
   };
 
   const setProject = index => {
-    setProjectIndex((index + projectSlides.length) % projectSlides.length);
+    setProjectIndex((index + visibleProjectSlides.length) % visibleProjectSlides.length);
   };
+
+  useEffect(() => {
+    setProjectIndex(0);
+  }, [projectsPerSlide]);
 
   const moveExperience = direction => {
     setExperienceAnimate(true);
     setExperienceIndex(current => current + direction);
+  };
+
+  const handleExperienceTouchStart = event => {
+    experienceGestureRef.current.startY = event.touches[0].clientY;
+  };
+
+  const handleExperienceTouchEnd = event => {
+    if (experienceGestureRef.current.startY === null) return;
+    const diff = experienceGestureRef.current.startY - event.changedTouches[0].clientY;
+    experienceGestureRef.current.startY = null;
+    if (Math.abs(diff) > 36) moveExperience(diff > 0 ? 1 : -1);
   };
 
   const normalizeExperience = () => {
@@ -470,12 +518,16 @@ export default function Page() {
           <div className="section-kicker">Experience</div>
           <h2 className="serif-title experience-title">Where I learned to lead, organize, and communicate.</h2>
           <div className="experience-shell">
-            <div className="experience-list">
+            <div
+              className="experience-list"
+              onTouchStart={handleExperienceTouchStart}
+              onTouchEnd={handleExperienceTouchEnd}
+            >
               <div
                 className="experience-track"
                 onTransitionEnd={normalizeExperience}
                 style={{
-                  transform: `translateY(-${experienceIndex * 176}px)`,
+                  transform: `translateY(-${experienceIndex * experienceStep}px)`,
                   transition: experienceAnimate ? 'transform .55s cubic-bezier(.22,.61,.36,1)' : 'none',
                 }}
               >
@@ -514,7 +566,7 @@ export default function Page() {
           </div>
           <div className="project-window">
             <div className="project-track" style={{ transform: `translateX(-${projectIndex * 100}%)` }}>
-              {projectSlides.map((slide, slideIndex) => (
+              {visibleProjectSlides.map((slide, slideIndex) => (
                 <div className="project-slide" key={slideIndex}>
                   {slide.map(project => (
                     <article

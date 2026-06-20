@@ -436,6 +436,7 @@ a {
   height: 528px;
   overflow: hidden;
   padding-right: 60px;
+  touch-action: pan-y;
 }
 
 .experience-track {
@@ -619,6 +620,8 @@ a {
 .loop-carousel-window {
   overflow: hidden;
   padding: 10px 2px 22px;
+  cursor: grab;
+  touch-action: pan-y;
 }
 
 .loop-photo-track {
@@ -885,13 +888,25 @@ a {
 }
 
 @media (max-width: 900px) {
+  .section-pad {
+    padding: 54px 20px;
+  }
+
+  .top-nav {
+    top: 12px;
+    height: 44px;
+    width: calc(100% - 24px);
+  }
+
   .nav-links {
     display: none;
   }
 
   .hero {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 18px;
+    min-height: auto;
+    padding-top: 88px;
   }
 
   .hero-left,
@@ -899,9 +914,24 @@ a {
     text-align: left;
   }
 
+  .hero h1 {
+    font-size: clamp(58px, 18vw, 78px);
+    margin-bottom: 14px;
+  }
+
+  .hero-role {
+    font-size: 15px;
+    margin-bottom: 18px;
+  }
+
+  .pill {
+    padding: 11px 17px;
+    font-size: 14px;
+  }
+
   .hero-photo-wrap {
-    max-width: 340px;
-    margin: auto;
+    width: min(78vw, 310px);
+    margin: 6px auto 0;
   }
 
   .tap-hint {
@@ -910,35 +940,111 @@ a {
     padding: 8px 11px;
   }
 
+  .hero-right {
+    margin-top: 12px;
+  }
+
+  .hero-right h2 {
+    font-size: 24px;
+  }
+
+  .hero-right p:not(.tiny-label) {
+    font-size: 14px;
+  }
+
+  .hero-links {
+    grid-template-columns: 1fr;
+    margin-top: 16px;
+  }
+
   .split,
   .inspire-card {
     grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .serif-title,
+  .serif-title.smallish,
+  .section-head-row .serif-title,
+  .experience-title {
+    font-size: clamp(38px, 12vw, 52px);
   }
 
   .inspire-card {
-    padding: 26px;
+    padding: 24px;
+  }
+
+  .script-title {
+    font-size: clamp(40px, 12vw, 58px);
+  }
+
+  .mini-frame {
+    height: 360px;
+  }
+
+  .mom-frame {
+    height: 320px;
+  }
+
+  .body-copy {
+    font-size: 15px;
+    line-height: 1.7;
   }
 
   .experience-list {
-    height: 528px;
-    padding-right: 48px;
+    height: 426px;
+    padding-right: 42px;
   }
 
   .experience-card {
     grid-template-columns: 1fr;
-    min-height: 280px;
+    min-height: 410px;
+    padding: 16px;
+    gap: 14px;
+  }
+
+  .experience-card img,
+  .blank-photo {
+    height: 150px;
   }
 
   .experience-card h3 {
-    font-size: 30px;
+    font-size: 28px;
+  }
+
+  .experience-card p {
+    font-size: 13px;
+  }
+
+  .experience-controls {
+    right: 0;
+  }
+
+  .experience-controls button {
+    width: 32px;
+    height: 32px;
   }
 
   .project-slide {
     grid-template-columns: 1fr;
   }
 
+  .project-card {
+    min-height: 210px;
+    padding: 24px;
+  }
+
+  .project-card h3 {
+    font-size: 30px;
+  }
+
   .section-head-row {
     display: block;
+  }
+
+  .small-note {
+    margin-top: 10px;
+    line-height: 1.5;
   }
 
   .footer {
@@ -952,22 +1058,75 @@ a {
 
   .detail-panel {
     padding: 30px 22px;
+    border-radius: 18px;
+    width: calc(100% - 24px);
   }
 
   .detail-grid {
     grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .detail-panel h2 {
+    font-size: clamp(34px, 11vw, 46px);
+    margin-right: 38px;
+  }
+
+  .detail-lead {
+    font-size: 14px;
   }
 
   .loop-photo-track img {
     flex-basis: 260px;
-    height: 360px;
+    height: 330px;
   }
 
   .small-loop-track img {
-    height: 190px;
+    height: 180px;
+  }
+
+  .light-nav {
+    width: 42px;
+    height: 42px;
+    font-size: 26px;
+  }
+
+  .light-nav.prev {
+    left: 10px;
+  }
+
+  .light-nav.next {
+    right: 10px;
   }
 
   .cursor-glow {
     display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .section-pad {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .hero h1 {
+    font-size: clamp(52px, 20vw, 68px);
+  }
+
+  .experience-list {
+    height: 448px;
+  }
+
+  .experience-card {
+    min-height: 432px;
+  }
+
+  .project-card h3 {
+    font-size: 28px;
+  }
+
+  .detail-panel {
+    max-height: calc(100vh - 24px);
   }
 }
